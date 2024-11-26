@@ -3,7 +3,6 @@
 import { useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { FileText, PenTool, BookOpen, Users, GraduationCap, Heart, PlayCircle, Volume2, Zap, Headphones } from 'lucide-react'
 import Link from 'next/link'
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax'
@@ -123,22 +122,6 @@ export default function Component() {
                 </motion.span>
               </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 2.2 }}
-                className="mt-8"
-              >
-                <Button
-                  size="lg"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 
-                    text-lg px-8 py-6 rounded-full shadow-lg
-                    transition-all duration-300 hover:shadow-xl
-                    hover:scale-105 active:scale-95"
-                >
-                  Join Our Volunteer Team
-                </Button>
-              </motion.div>
             </motion.div>
           </div>
 
@@ -294,18 +277,13 @@ export default function Component() {
               transition={{ duration: 0.8 }}
               viewport={{ once: false }}
             >
-              <h2 className="text-4xl font-bold mb-4">Ready to Make an Impact?</h2>
-              <p className="text-xl mb-8">Join our volunteer team and help create amazing audiovisual experiences!</p>
-              <form className="flex flex-col md:flex-row justify-center items-center gap-4">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full md:w-96 bg-white text-black"
-                />
+              <h2 className="text-4xl font-bold mb-4">Help us improve our craft</h2>
+              <p className="text-xl mb-8">Your insights are invaluable in our journey toward excellence.<br /> Share your experience to help us deliver even better results.</p>
+              <Link href="/feedback">
                 <Button size="lg" className="w-full md:w-auto bg-white text-primary hover:bg-gray-200">
-                  Sign Up to Volunteer
+                  Send Feedback
                 </Button>
-              </form>
+              </Link>
             </motion.div>
           </div>
         </section>
