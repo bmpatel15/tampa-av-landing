@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     const data = await resend.emails.send({
-      from: 'feedback@tampaav.com',
+      from: 'feedback@tampa-av.net',
       to: 'tampaav@gmail.com',
       subject: 'New Website Feedback',
       text: feedback,
