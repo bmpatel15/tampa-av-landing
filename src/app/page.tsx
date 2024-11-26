@@ -214,9 +214,27 @@ export default function Component() {
             <div className="container mx-auto relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
-                  { icon: <FileText className="w-8 h-8" />, title: "Live Cue Sheet", link: "/live-cue-sheet", color: "from-blue-400 to-blue-600" },
-                  { icon: <PenTool className="w-8 h-8" />, title: "Graphic Request Form", link: "/graphic-request", color: "from-green-400 to-green-600" },
-                  { icon: <BookOpen className="w-8 h-8" />, title: "LMS System", link: "/lms", color: "from-purple-400 to-purple-600" },
+                  { 
+                    icon: <FileText className="w-8 h-8" />, 
+                    title: "Live Cue Sheet", 
+                    link: "https://livecuesheet.tampa-av.net", 
+                    color: "from-blue-400 to-blue-600",
+                    active: true // Set to true when the link is active
+                  },
+                  { 
+                    icon: <PenTool className="w-8 h-8" />, 
+                    title: "Graphic Request Form", 
+                    link: "https://graphicrequest.tampa-av.net", 
+                    color: "from-green-400 to-green-600",
+                    active: false // Set to true when the link is active
+                  },
+                  { 
+                    icon: <BookOpen className="w-8 h-8" />, 
+                    title: "LMS System", 
+                    link: "https://lms.tampa-av.net", 
+                    color: "from-purple-400 to-purple-600",
+                    active: false // Set to true when the link is active
+                  },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -226,15 +244,39 @@ export default function Component() {
                     viewport={{ once: false }}
                     className="h-full"
                   >
-                    <Link href={item.link} className="block h-full">
-                      <div className={`bg-white p-6 rounded-lg shadow-lg text-center transition-transform hover:scale-105 hover:shadow-xl h-full flex flex-col justify-between`}>
-                        <div className={`mb-4 p-8 rounded-full bg-gradient-to-r ${item.color} flex flex-col items-center justify-center text-white space-y-2`}>
-                          {item.icon}
-                          <h3 className="text-lg font-semibold">{item.title}</h3>
+                    {item.active ? (
+                      <a 
+                        href={item.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="block h-full"
+                      >
+                        <div className={`bg-white p-6 rounded-lg shadow-lg text-center transition-transform hover:scale-105 hover:shadow-xl h-full flex flex-col justify-between`}>
+                          <div className={`mb-4 p-8 rounded-full bg-gradient-to-r ${item.color} flex flex-col items-center justify-center text-white space-y-2`}>
+                            {item.icon}
+                            <h3 className="text-lg font-semibold">{item.title}</h3>
+                          </div>
+                          <p className="text-muted-foreground">Click to access</p>
                         </div>
-                        <p className="text-muted-foreground">Click to access</p>
+                      </a>
+                    ) : (
+                      <div className="block h-full cursor-not-allowed">
+                        <div className={`bg-white p-6 rounded-lg shadow-lg text-center h-full flex flex-col justify-between relative overflow-hidden`}>
+                          <div className={`mb-4 p-8 rounded-full bg-gradient-to-r ${item.color} flex flex-col items-center justify-center text-white space-y-2 opacity-50`}>
+                            {item.icon}
+                            <h3 className="text-lg font-semibold">{item.title}</h3>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-muted-foreground font-semibold">In Development</p>
+                            <p className="text-sm text-muted-foreground">Coming Soon!</p>
+                          </div>
+                          {/* Optional: Add a "development" badge */}
+                          <div className="absolute top-2 right-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                            Development
+                          </div>
+                        </div>
                       </div>
-                    </Link>
+                    )}
                   </motion.div>
                 ))}
               </div>
