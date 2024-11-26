@@ -1,8 +1,25 @@
 import { NextResponse } from 'next/server'
+import { Resend } from 'resend'
 
 export async function POST(request: Request) {
+  // Debug: Log environment variable
+  console.log('API Key exists:', !!process.env.RESEND_API_KEY)
+  console.log('API Key value:', process.env.RESEND_API_KEY?.substring(0, 5) + '...')
+
+  // Check if API key exists
+  if (!process.env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY is missing or undefined')
+    return NextResponse.json(
+      { error: 'Server configuration error' },
+      { status: 500 }
+    )
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
   try {
-    const { feedback } = await request.json()
+    const body = await request.json()
+    const { feedback } = body
 
     if (!feedback) {
       return NextResponse.json(
@@ -11,15 +28,32 @@ export async function POST(request: Request) {
       )
     }
 
-    // Log the feedback instead of sending email
-    console.log('Received feedback:', feedback)
-    
-    return NextResponse.json({ message: 'Feedback received successfully' })
+    console.log('Attempting to send email with Resend...')
+
+    // Send email using Resend
+    const data = await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: 'bpatel501@gmail.com',
+      subject: 'New Website Feedback',
+      text: feedback,
+      html: `<p>${feedback}</p>`
+    })
+
+    console.log('Resend response:', data)
+
+    return NextResponse.json({ 
+      success: true,
+      message: 'Feedback sent successfully'
+    })
   } catch (error) {
-    console.error('Error processing feedback:', error)
+    console.error('Detailed error:', error)
     return NextResponse.json(
-      { error: 'Invalid request' },
-      { status: 400 }
+      { 
+        success: false,
+        error: 'Failed to send feedback',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
     )
   }
 } 
