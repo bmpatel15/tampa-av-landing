@@ -1,11 +1,34 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { FileText, PenTool, BookOpen, Users, GraduationCap, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax'
+
+// First, let's create a custom hamburger button component
+const HamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
+  return (
+    <div className="w-6 h-6 flex flex-col justify-center items-center relative">
+      <motion.span
+        animate={isOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -8 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        className="absolute w-full h-0.5 bg-gray-600 transform origin-center"
+      />
+      <motion.span
+        animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="absolute w-full h-0.5 bg-gray-600"
+      />
+      <motion.span
+        animate={isOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 8 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        className="absolute w-full h-0.5 bg-gray-600 transform origin-center"
+      />
+    </div>
+  )
+}
 
 export default function Component() {
   // Scroll progress animation for the hero section
@@ -19,11 +42,53 @@ export default function Component() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8])
   
   const heroTags = ['Continuous Learning', 'Innovation', 'Knowledge Sharing']
-  
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        menuRef.current && 
+        buttonRef.current && 
+        !menuRef.current.contains(event.target as Node) && 
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const quickAccessItems = [
+    { 
+      icon: <FileText className="w-5 h-5" />, 
+      title: "Live Cue Sheet", 
+      link: "https://livecuesheet.tampa-av.net", 
+      active: true
+    },
+    { 
+      icon: <PenTool className="w-5 h-5" />, 
+      title: "Graphic Request Form", 
+      link: "https://graphicrequest.tampa-av.net", 
+      active: false
+    },
+    { 
+      icon: <BookOpen className="w-5 h-5" />, 
+      title: "LMS System", 
+      link: "https://lms.tampa-av.net", 
+      active: false
+    }
+  ]
+
   return (
     <ParallaxProvider>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white overflow-hidden">
-        {/* Simplified Header */}
+        {/* Updated Header */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
@@ -31,14 +96,93 @@ export default function Component() {
                 Tampa AV
               </Link>
               
-              <nav className="hidden md:flex items-center space-x-6">
-                <Link href="/" className="text-sm font-medium hover:text-primary">
-                  Home
-                </Link>
-                <Link href="/feedback" className="text-sm font-medium hover:text-primary">
-                  Feedback
-                </Link>
-              </nav>
+              <div className="flex items-center space-x-6">
+                <nav className="hidden md:flex items-center space-x-6">
+                  <Link href="/" className="text-sm font-medium hover:text-primary">
+                    Home
+                  </Link>
+                </nav>
+                
+                {/* Hamburger Menu Button */}
+                <button
+                  ref={buttonRef}
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  className="p-2 hover:bg-gray-100 rounded-md transition-colors relative"
+                  aria-label="Toggle menu"
+                >
+                  <HamburgerIcon isOpen={isMenuOpen} />
+                </button>
+
+                {/* Animated Dropdown Menu */}
+                <AnimatePresence>
+                  {isMenuOpen && (
+                    <motion.div 
+                      ref={menuRef}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 50 }}
+                      transition={{ 
+                        duration: 0.3,
+                        ease: [0.4, 0, 0.2, 1],
+                        x: { type: "spring", stiffness: 100, damping: 15 }
+                      }}
+                      className="absolute top-full right-0 mt-2 w-56 bg-gradient-to-br from-white via-white to-gray-50/80 rounded-md shadow-lg py-2 border border-gray-200/80 backdrop-blur-sm"
+                    >
+                      {quickAccessItems.map((item, index) => (
+                        <motion.div 
+                          key={index}
+                          initial={{ opacity: 0, x: 50 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ 
+                            delay: index * 0.1,
+                            duration: 0.3,
+                            ease: [0.4, 0, 0.2, 1],
+                            x: { type: "spring", stiffness: 100, damping: 15 }
+                          }}
+                          className="px-4 py-2 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent transition-colors"
+                        >
+                          {item.active ? (
+                            <a
+                              href={item.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center space-x-2 hover:text-primary transition-colors"
+                            >
+                              {item.icon}
+                              <span>{item.title}</span>
+                            </a>
+                          ) : (
+                            <div className="flex items-center space-x-2 text-gray-400 cursor-not-allowed">
+                              {item.icon}
+                              <span>{item.title}</span>
+                              <span className="text-xs bg-yellow-100/80 text-yellow-800 px-2 py-0.5 rounded-full ml-auto backdrop-blur-sm">
+                                Soon
+                              </span>
+                            </div>
+                          )}
+                        </motion.div>
+                      ))}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: quickAccessItems.length * 0.1 }}
+                      >
+                        <div className="border-t border-gray-100/80 my-2"></div>
+                        <div className="px-4 py-2 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent transition-colors">
+                          <Link 
+                            href="/feedback"
+                            className="flex items-center space-x-2 hover:text-primary transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <FileText className="w-5 h-5" />
+                            <span>Send Feedback</span>
+                          </Link>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </header>
