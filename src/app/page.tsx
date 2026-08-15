@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
-import { FileText, PenTool, BookOpen, Users, GraduationCap, Heart } from 'lucide-react'
+import { FileText, ClipboardList, BookOpen, Users, GraduationCap, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { ParallaxProvider, Parallax } from 'react-scroll-parallax'
 
@@ -29,6 +29,31 @@ const HamburgerIcon = ({ isOpen }: { isOpen: boolean }) => {
     </div>
   )
 }
+
+// Shared by the header dropdown and the Quick Access cards below
+const quickAccessItems = [
+  {
+    icon: FileText,
+    title: "Live Cue Sheet",
+    link: "https://livecuesheet.tampa-av.net",
+    color: "from-blue-400 to-blue-600",
+    active: true
+  },
+  {
+    icon: ClipboardList,
+    title: "Content Request Portal",
+    link: "https://portal.tampa-av.net",
+    color: "from-green-400 to-green-600",
+    active: true
+  },
+  {
+    icon: BookOpen,
+    title: "LMS System",
+    link: "https://lms.tampa-av.net",
+    color: "from-purple-400 to-purple-600",
+    active: false // Set to true when the link is active
+  }
+]
 
 export default function Component() {
   // Scroll progress animation for the hero section
@@ -63,27 +88,6 @@ export default function Component() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
-
-  const quickAccessItems = [
-    { 
-      icon: <FileText className="w-5 h-5" />, 
-      title: "Live Cue Sheet", 
-      link: "https://livecuesheet.tampa-av.net", 
-      active: true
-    },
-    { 
-      icon: <PenTool className="w-5 h-5" />, 
-      title: "Graphic Request Form", 
-      link: "https://graphicrequest.tampa-av.net", 
-      active: false
-    },
-    { 
-      icon: <BookOpen className="w-5 h-5" />, 
-      title: "LMS System", 
-      link: "https://lms.tampa-av.net", 
-      active: false
-    }
-  ]
 
   return (
     <ParallaxProvider>
@@ -148,12 +152,12 @@ export default function Component() {
                               rel="noopener noreferrer"
                               className="flex items-center space-x-2 hover:text-primary transition-colors"
                             >
-                              {item.icon}
+                              <item.icon className="w-5 h-5" />
                               <span>{item.title}</span>
                             </a>
                           ) : (
                             <div className="flex items-center space-x-2 text-gray-400 cursor-not-allowed">
-                              {item.icon}
+                              <item.icon className="w-5 h-5" />
                               <span>{item.title}</span>
                               <span className="text-xs bg-yellow-100/80 text-yellow-800 px-2 py-0.5 rounded-full ml-auto backdrop-blur-sm">
                                 Soon
@@ -357,29 +361,7 @@ export default function Component() {
             </Parallax>
             <div className="container mx-auto relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  { 
-                    icon: <FileText className="w-8 h-8" />, 
-                    title: "Live Cue Sheet", 
-                    link: "https://livecuesheet.tampa-av.net", 
-                    color: "from-blue-400 to-blue-600",
-                    active: true // Set to true when the link is active
-                  },
-                  { 
-                    icon: <PenTool className="w-8 h-8" />, 
-                    title: "Graphic Request Form", 
-                    link: "https://graphicrequest.tampa-av.net", 
-                    color: "from-green-400 to-green-600",
-                    active: false // Set to true when the link is active
-                  },
-                  { 
-                    icon: <BookOpen className="w-8 h-8" />, 
-                    title: "LMS System", 
-                    link: "https://lms.tampa-av.net", 
-                    color: "from-purple-400 to-purple-600",
-                    active: false // Set to true when the link is active
-                  },
-                ].map((item, index) => (
+                {quickAccessItems.map((item, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 50 }}
@@ -397,7 +379,7 @@ export default function Component() {
                       >
                         <div className={`bg-white p-6 rounded-lg shadow-lg text-center transition-transform hover:scale-105 hover:shadow-xl h-full flex flex-col justify-between`}>
                           <div className={`mb-4 p-8 rounded-full bg-gradient-to-r ${item.color} flex flex-col items-center justify-center text-white space-y-2`}>
-                            {item.icon}
+                            <item.icon className="w-8 h-8" />
                             <h3 className="text-lg font-semibold">{item.title}</h3>
                           </div>
                           <p className="text-muted-foreground">Click to access</p>
@@ -407,7 +389,7 @@ export default function Component() {
                       <div className="block h-full cursor-not-allowed">
                         <div className={`bg-white p-6 rounded-lg shadow-lg text-center h-full flex flex-col justify-between relative overflow-hidden`}>
                           <div className={`mb-4 p-8 rounded-full bg-gradient-to-r ${item.color} flex flex-col items-center justify-center text-white space-y-2 opacity-50`}>
-                            {item.icon}
+                            <item.icon className="w-8 h-8" />
                             <h3 className="text-lg font-semibold">{item.title}</h3>
                           </div>
                           <div className="space-y-1">
